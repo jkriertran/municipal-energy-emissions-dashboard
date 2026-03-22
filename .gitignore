@@ -21,3 +21,4 @@ data/raw/
 outputs/
 *.log
 .playwright-cli/
+logs-*.txt
