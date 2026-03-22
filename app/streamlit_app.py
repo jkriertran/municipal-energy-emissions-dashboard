@@ -1,4 +1,5 @@
 from __future__ import annotations
+import html
 from pathlib import Path
 
 import pandas as pd
@@ -464,6 +465,27 @@ def render_chart_header(column: st.delta_generator.DeltaGenerator, county_name: 
     )
 
 
+def render_key_insights(insights: list[tuple[str, str]]) -> None:
+    insight_cards = "".join(
+        (
+            '<div class="insight-item">'
+            f'<div class="insight-label">{html.escape(label)}</div>'
+            f'<div class="insight-text">{html.escape(text)}</div>'
+            "</div>"
+        )
+        for label, text in insights
+    )
+    st.markdown(
+        (
+            '<div class="insights-panel">'
+            '<div class="insights-title">Key Insights</div>'
+            f'<div class="insights-grid">{insight_cards}</div>'
+            "</div>"
+        ),
+        unsafe_allow_html=True,
+    )
+
+
 def apply_chart_theme(fig, *, height: int, legend_orientation: str = "h", legend_y: float = -0.22) -> None:
     fig.update_layout(
         height=height,
@@ -577,25 +599,7 @@ st.markdown(
 
 st.write("")
 
-st.markdown(
-    f"""
-    <div class="insights-panel">
-      <div class="insights-title">Key Insights</div>
-      <div class="insights-grid">
-        {''.join(
-            f'''
-            <div class="insight-item">
-              <div class="insight-label">{label}</div>
-              <div class="insight-text">{text}</div>
-            </div>
-            '''
-            for label, text in key_insights
-        )}
-      </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+render_key_insights(key_insights)
 
 st.write("")
 
