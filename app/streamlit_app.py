@@ -226,6 +226,45 @@ st.markdown(
         color: {COLOR_MUTED};
         min-height: 2.7rem;
       }}
+      .insights-panel {{
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid {COLOR_BORDER};
+        border-radius: 24px;
+        padding: 1.15rem 1.2rem 1.05rem;
+        box-shadow: 0 16px 36px rgba(19, 38, 40, 0.06);
+        margin-top: 1rem;
+      }}
+      .insights-title {{
+        color: {COLOR_TEXT};
+        font-size: 1.08rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        margin-bottom: 0.75rem;
+      }}
+      .insights-grid {{
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.75rem;
+      }}
+      .insight-item {{
+        background: {COLOR_SOFT};
+        border: 1px solid rgba(15, 92, 90, 0.10);
+        border-radius: 18px;
+        padding: 0.9rem 0.95rem;
+      }}
+      .insight-label {{
+        color: {COLOR_MUTED};
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.35rem;
+      }}
+      .insight-text {{
+        color: {COLOR_TEXT};
+        font-size: 0.96rem;
+        line-height: 1.45;
+      }}
       .section-heading {{
         margin: 0 0 0.35rem;
       }}
@@ -272,6 +311,11 @@ st.markdown(
         padding: 0.9rem 1rem;
         border-radius: 12px;
         font-size: 0.95rem;
+      }}
+      @media (max-width: 1100px) {{
+        .insights-grid {{
+          grid-template-columns: 1fr;
+        }}
       }}
     </style>
     """,
@@ -346,6 +390,55 @@ def latest_snapshot(county_df: pd.DataFrame, sector_df: pd.DataFrame) -> dict[st
         "largest_sector_share": float(largest_sector["share"]),
         "largest_sector_name": str(largest_sector["sector"]),
     }
+
+
+def build_key_insights(
+    selected_county: str,
+    county_df: pd.DataFrame,
+    compare_df: pd.DataFrame,
+    snapshot: dict[str, float],
+) -> list[tuple[str, str]]:
+    latest_year = int(snapshot["latest_year"])
+    first_year = int(county_df["year"].min())
+    change_pct = (snapshot["latest_gwh"] - snapshot["first_gwh"]) / snapshot["first_gwh"] * 100
+    change_direction = "down" if change_pct < 0 else "up"
+
+    insights: list[tuple[str, str]] = [
+        (
+            "Trend",
+            f"{selected_county} used {snapshot['latest_gwh']:,.0f} GWh in {latest_year}, {change_direction} "
+            f"{abs(change_pct):.1f}% since {first_year}.",
+        ),
+        (
+            "Sector Mix",
+            f"{snapshot['largest_sector_name']} is the largest sector in {latest_year}, accounting for "
+            f"{snapshot['largest_sector_share'] * 100:.1f}% of county electricity use.",
+        ),
+    ]
+
+    latest_compare = compare_df[compare_df["year"] == latest_year].copy()
+    peer_compare = latest_compare[latest_compare["county"] != selected_county].copy()
+
+    if not peer_compare.empty:
+        peer_average = float(peer_compare["kwh_per_capita"].mean())
+        diff_pct = (snapshot["kwh_per_capita"] - peer_average) / peer_average * 100
+        relative_position = "above" if diff_pct > 0 else "below"
+        insights.append(
+            (
+                "Benchmark",
+                f"In {latest_year}, {selected_county} per-capita use was {abs(diff_pct):.1f}% {relative_position} "
+                f"the selected peer average.",
+            )
+        )
+    else:
+        insights.append(
+            (
+                "Per Capita",
+                f"{selected_county} recorded {snapshot['kwh_per_capita']:,.0f} kWh per resident in {latest_year}.",
+            )
+        )
+
+    return insights
 
 
 def year_tick_values(years: list[int]) -> list[int]:
@@ -439,6 +532,7 @@ county_totals = totals_df[totals_df["county"] == selected_county].copy()
 county_sectors = raw_df[raw_df["county"] == selected_county].copy()
 compare_totals = totals_df[totals_df["county"].isin([selected_county, *selected_peers])].copy()
 snapshot = latest_snapshot(county_totals, county_sectors)
+key_insights = build_key_insights(selected_county, county_totals, compare_totals, snapshot)
 
 sector_labels = {
     "Agriculture and Water Pumping": "Agriculture & Water",
@@ -476,6 +570,28 @@ st.markdown(
         A lightweight public-sector dashboard for tracking electricity trends, sector mix, and peer benchmarks
         using public California county data. This first page is designed for fast reporting and interview-ready storytelling.
       </p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.write("")
+
+st.markdown(
+    f"""
+    <div class="insights-panel">
+      <div class="insights-title">Key Insights</div>
+      <div class="insights-grid">
+        {''.join(
+            f'''
+            <div class="insight-item">
+              <div class="insight-label">{label}</div>
+              <div class="insight-text">{text}</div>
+            </div>
+            '''
+            for label, text in key_insights
+        )}
+      </div>
     </div>
     """,
     unsafe_allow_html=True,
