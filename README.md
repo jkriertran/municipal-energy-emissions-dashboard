@@ -59,8 +59,25 @@ pip install -r requirements.txt
 Start the app:
 
 ```bash
+streamlit run streamlit_app.py
+```
+
+You can still run the original module directly if you prefer:
+
+```bash
 streamlit run app/streamlit_app.py
 ```
+
+## Deploy on Streamlit Community Cloud
+
+Use these settings when you create the app:
+
+- Repository: `jkriertran/municipal-energy-emissions-dashboard`
+- Branch: `main`
+- Main file path: `streamlit_app.py`
+- Python version: `3.12` or current default
+
+Community Cloud requires you to choose the repository, branch, and entrypoint file path explicitly. Keeping a root-level `streamlit_app.py` makes deployment more reliable and avoids path confusion when the app code lives in a subfolder.
 
 ## Rebuild the processed dataset
 

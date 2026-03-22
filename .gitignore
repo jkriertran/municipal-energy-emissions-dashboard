@@ -20,3 +20,4 @@ data/raw/
 # Temporary outputs
 outputs/
 *.log
+.playwright-cli/

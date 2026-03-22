@@ -51,7 +51,9 @@ st.markdown(
       .block-container {{
         padding-top: 2.25rem;
         padding-bottom: 2rem;
-        max-width: 1180px;
+        padding-left: 1.35rem;
+        padding-right: 1.35rem;
+        max-width: 1400px;
       }}
       section[data-testid="stSidebar"] {{
         background: {COLOR_SIDEBAR_BG};
@@ -113,6 +115,46 @@ st.markdown(
       }}
       section[data-testid="stSidebar"] button[kind="secondary"]:hover {{
         background: {COLOR_CHIP_BG} !important;
+      }}
+      header[data-testid="stHeader"] {{
+        background: rgba(19, 38, 40, 0.96) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }}
+      header[data-testid="stHeader"] [data-testid="stToolbar"] {{
+        color: #f8fbfc !important;
+      }}
+      header[data-testid="stHeader"] *,
+      header[data-testid="stHeader"] a,
+      header[data-testid="stHeader"] span,
+      header[data-testid="stHeader"] button {{
+        color: #f8fbfc !important;
+      }}
+      header[data-testid="stHeader"] [data-testid="stExpandSidebarButton"],
+      header[data-testid="stHeader"] [data-testid="stSidebarCollapseButton"],
+      header[data-testid="stHeader"] button[data-testid="stBaseButton-headerNoPadding"],
+      header[data-testid="stHeader"] button[data-testid="stBaseButton-header"] {{
+        color: #f8fbfc !important;
+        border-radius: 10px !important;
+      }}
+      header[data-testid="stHeader"] [data-testid="stExpandSidebarButton"]:hover,
+      header[data-testid="stHeader"] [data-testid="stSidebarCollapseButton"]:hover,
+      header[data-testid="stHeader"] button[data-testid="stBaseButton-headerNoPadding"]:hover,
+      header[data-testid="stHeader"] button[data-testid="stBaseButton-header"]:hover {{
+        background: rgba(255, 255, 255, 0.10) !important;
+      }}
+      header[data-testid="stHeader"] [data-testid="stIconMaterial"] {{
+        color: #f8fbfc !important;
+      }}
+      header[data-testid="stHeader"] svg,
+      header[data-testid="stHeader"] button svg {{
+        fill: #f8fbfc !important;
+        color: #f8fbfc !important;
+      }}
+      [data-testid="stToolbar"] button {{
+        color: #f8fbfc !important;
+      }}
+      [data-testid="stToolbar"] button:hover {{
+        background: rgba(255, 255, 255, 0.08) !important;
       }}
       .hero {{
         background: rgba(255, 255, 255, 0.92);
