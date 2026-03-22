@@ -1,0 +1,22 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.env
+.venv/
+venv/
+
+# Local Streamlit and editor state
+.streamlit/secrets.toml
+.vscode/
+.idea/
+
+# Raw source data kept local, not tracked
+AGG_CONSUMPTION_ELEC_COUNTY_TBL_ada.xlsx
+E-6_Report_July_2010-2019_w.xlsx
+E-6_Report_July_2020-2025_Feb26_w.xlsx
+FacilityEmissions.csv
+data/raw/
+
+# Temporary outputs
+outputs/
+*.log
